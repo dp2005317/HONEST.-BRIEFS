@@ -7,3 +7,4 @@ node_modules/
 .env.production.local
 .vscode/
 .DS_Store
+node_modules
