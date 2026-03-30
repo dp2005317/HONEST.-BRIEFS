@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Oswald:wght@200..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --animate-pulseslow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ===========================
+   DAY THEME (Default)
+   =========================== */
+:root,
+[data-theme="day"] {
+  --background: #FFFFFF;
+  --foreground: #09090b;
+  --ink-secondary: #4b5563;
+  --border-ink: #e5e7eb;
+  --card-bg: #FFFFFF;
+  --card-border: #e5e7eb;
+  --card-hover-border: #111827;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  --card-hover-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --nav-border: #000000;
+  --pill-bg: #FFFFFF;
+  --pill-border: #e5e7eb;
+  --pill-hover-bg: #f3f4f6;
+  --pill-hover-border: #000000;
+  --pill-active-bg: #000000;
+  --pill-active-color: #FFFFFF;
+  --btn-bg: #000000;
+  --btn-color: #FFFFFF;
+  --btn-hover-bg: #374151;
+  --badge-bg: #FFFFFF;
+  --badge-border: #000000;
+  --badge-color: #000000;
+  --badge-shadow: 4px 4px 0px #000000;
+  --skeleton-bg: #f3f4f6;
+  --border-radius: 0.5rem;
+  --pill-radius: 0;
+  --accent: #000000;
+  --live-badge: #dc2626;
+}
+
+/* ===========================
+   DARK THEME
+   =========================== */
+[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #f5f5f5;
+  --ink-secondary: #a1a1aa;
+  --border-ink: #27272a;
+  --card-bg: #18181b;
+  --card-border: #27272a;
+  --card-hover-border: #52525b;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --card-hover-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  --nav-bg: rgba(9, 9, 11, 0.92);
+  --nav-border: #27272a;
+  --pill-bg: #18181b;
+  --pill-border: #27272a;
+  --pill-hover-bg: #27272a;
+  --pill-hover-border: #52525b;
+  --pill-active-bg: #f5f5f5;
+  --pill-active-color: #09090b;
+  --btn-bg: #f5f5f5;
+  --btn-color: #09090b;
+  --btn-hover-bg: #d4d4d8;
+  --badge-bg: #18181b;
+  --badge-border: #52525b;
+  --badge-color: #f5f5f5;
+  --badge-shadow: 4px 4px 0px #27272a;
+  --skeleton-bg: #27272a;
+  --border-radius: 0.5rem;
+  --pill-radius: 0;
+  --accent: #f5f5f5;
+  --live-badge: #ef4444;
+}
+
+/* ===========================
+   MAGAZINE THEME — Dark Luxury Editorial
+   =========================== */
+[data-theme="magazine"] {
+  --background: #1a1a1a;
+  --foreground: #f0ece4;
+  --ink-secondary: #9a9083;
+  --border-ink: #333333;
+  --card-bg: #222222;
+  --card-border: #333333;
+  --card-hover-border: #C9A96E;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --card-hover-shadow: 0 12px 32px rgba(201,169,110,0.15);
+  --nav-bg: rgba(18, 18, 18, 0.95);
+  --nav-border: #C9A96E;
+  --pill-bg: #2a2a2a;
+  --pill-border: #444444;
+  --pill-hover-bg: #333333;
+  --pill-hover-border: #C9A96E;
+  --pill-active-bg: #C9A96E;
+  --pill-active-color: #111111;
+  --btn-bg: #C9A96E;
+  --btn-color: #111111;
+  --btn-hover-bg: #b8954d;
+  --badge-bg: #C9A96E;
+  --badge-border: #C9A96E;
+  --badge-color: #111111;
+  --badge-shadow: 4px 4px 0px rgba(201,169,110,0.25);
+  --skeleton-bg: #2a2a2a;
+  --border-radius: 0;
+  --pill-radius: 0;
+  --accent: #C9A96E;
+  --live-badge: #C9A96E;
+}
+
+/* ===========================
+   BASE STYLES
+   =========================== */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+  background-attachment: fixed;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Magazine condensed editorial font */
+[data-theme="magazine"] .font-magazine {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+}
+
+/* ===========================
+   COMPONENT STYLES
+   =========================== */
+
+/* News Panel (Card) */
+.news-panel {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--card-shadow);
+}
+
+.news-panel:hover {
+  border-color: var(--card-hover-border);
+  transform: translateY(-4px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+/* Navbar */
+.news-clear {
+  backdrop-filter: blur(8px);
+  background-color: var(--nav-bg);
+  border-bottom: 2px solid var(--nav-border);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+/* Category Pills */
+.news-pill {
+  padding: 0.375rem 1rem;
+  border-radius: var(--pill-radius);
+  border: 1px solid var(--pill-border);
+  background-color: var(--pill-bg);
+  transition: all 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  color: var(--foreground);
+}
+
+.news-pill:hover {
+  background-color: var(--pill-hover-bg);
+  border-color: var(--pill-hover-border);
+}
+
+.news-pill.active {
+  background-color: var(--pill-active-bg);
+  border-color: var(--pill-active-bg);
+  color: var(--pill-active-color);
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  font-weight: 800;
+  border-radius: var(--pill-radius);
+  padding: 0.5rem 1.4rem;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-hover-bg);
+  transform: translateY(-1px);
+}
+
+/* Meta Text */
+.news-meta {
+  color: var(--ink-secondary);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+/* Subtle Paper Texture (day only) */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1000;
+  mix-blend-mode: multiply;
+}
+
+[data-theme="dark"] body::after {
+  opacity: 0;
+}
+
+[data-theme="magazine"] body::after {
+  opacity: 0;
+}
+
+/* ===========================
+   MAGAZINE-SPECIFIC OVERRIDES
+   =========================== */
+[data-theme="magazine"] .news-pill {
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  border-width: 1px;
+}
+
+[data-theme="magazine"] .news-pill.active {
+  font-weight: 800;
+}
+
+[data-theme="magazine"] .btn-primary {
+  border-radius: 0;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+}
+
+[data-theme="magazine"] .news-panel {
+  border-radius: 0;
+}
+
+[data-theme="magazine"] .news-panel:hover {
+  border-color: #C9A96E;
+}

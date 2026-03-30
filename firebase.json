@@ -1,0 +1,18 @@
+{
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "HONEST. Briefs News",
+        "supportEmail": "extinctmatter9@gmail.com"
+      }
+    }
+  }
+}
