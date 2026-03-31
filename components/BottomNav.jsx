@@ -8,33 +8,39 @@ export default function BottomNav({ activeTab = 'home', onTabChange, onThemeTogg
       <div className="flex justify-around items-center h-16">
         <button 
           onClick={() => onTabChange && onTabChange('home')}
-          className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? 'text-black' : 'text-gray-400'}`}
+          className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? '' : 'opacity-50'}`}
           style={{ color: activeTab === 'home' ? 'var(--foreground)' : 'var(--ink-secondary)' }}
         >
-          <div className={`p-1.5 px-6 rounded-full transition-all ${activeTab === 'home' ? 'bg-black/10' : ''}`}>
-             <Home className={`w-6 h-6 ${activeTab === 'home' ? 'fill-current' : ''}`} />
+          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+             {activeTab === 'home' && (
+               <div className="absolute inset-0 rounded-full opacity-10" style={{ backgroundColor: 'var(--foreground)' }} />
+             )}
+             <Home className={`w-6 h-6 relative z-10 ${activeTab === 'home' ? 'fill-current' : ''}`} />
           </div>
           <span className="text-[10px] font-bold tracking-tight">Home</span>
         </button>
 
         <button 
           onClick={() => onThemeToggle && onThemeToggle()}
-          className="flex flex-col items-center gap-1 transition-all text-gray-400"
+          className="relative flex flex-col items-center gap-1 transition-all opacity-50"
           style={{ color: 'var(--ink-secondary)' }}
         >
-          <div className="p-1.5 px-6 rounded-full transition-all">
-             <Palette className="w-6 h-6" />
+          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+             <Palette className="w-6 h-6 relative z-10" />
           </div>
           <span className="text-[10px] font-bold tracking-tight">Theme</span>
         </button>
 
         <button 
           onClick={() => onTabChange && onTabChange('Video News')}
-          className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'Video News' ? 'text-black' : 'text-gray-400'}`}
+          className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === 'Video News' ? '' : 'opacity-50'}`}
           style={{ color: activeTab === 'Video News' ? 'var(--foreground)' : 'var(--ink-secondary)' }}
         >
-          <div className={`p-1.5 px-6 rounded-full transition-all ${activeTab === 'Video News' ? 'bg-black/10' : ''}`}>
-             <Video className={`w-6 h-6 ${activeTab === 'Video News' ? 'fill-current' : ''}`} />
+          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+             {activeTab === 'Video News' && (
+               <div className="absolute inset-0 rounded-full opacity-20" style={{ backgroundColor: 'rgba(128,128,128,0.5)' }} />
+             )}
+             <Video className={`w-6 h-6 relative z-10 ${activeTab === 'Video News' ? 'fill-current' : ''}`} />
           </div>
           <span className="text-[10px] font-bold tracking-tight text-center">Video<br/>News</span>
         </button>

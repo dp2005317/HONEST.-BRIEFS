@@ -163,11 +163,16 @@ export default function Navbar({ onSearch }) {
                 {showInstallOptions && (
                   <button 
                     onClick={handleInstall}
-                    className="p-2 transition-all animate-pulse"
-                    style={{ color: 'var(--accent)' }}
-                    title="Install App"
+                    className="flex items-center gap-1 font-black text-[9px] tracking-widest uppercase py-1.5 px-3 border-2 transition-all shadow-md active:scale-95 ml-2"
+                    style={{ 
+                      borderColor: 'var(--accent)', 
+                      color: 'var(--btn-color)', 
+                      backgroundColor: 'var(--accent)', 
+                      borderRadius: 'var(--pill-radius)' 
+                    }}
                   >
-                    <Download className="h-5 w-5" />
+                    <Download className="h-3 w-3" />
+                    <span>Install</span>
                   </button>
                 )}
               </div>
