@@ -10,10 +10,10 @@ import { useTheme } from '@/context/ThemeContext';
 const fetcher = url => fetch(url).then(r => r.json());
 
 const LIVE_CHANNELS = [
-  { name: 'Sky News', id: 'UCoMdktPbSTixAyNGwb-UYkQ' },
+  { name: 'ABP News', id: 'UCRWFSbif-RFENbBrSiez1DA' },
+  { name: 'Zee News', id: 'UCxZn4XGQmnsQYn-XnK2DqAA' },
   { name: 'France 24', id: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' },
   { name: 'Al Jazeera', id: 'UCNye-wNBqNL5ZzHSJj3l8Bg' },
-  { name: 'NBC News', id: 'UCeY0bbntWzzVIaj2z3QigXg' },
   { name: 'DW News', id: 'UCknLrEdhRCp1aegoMqRaCZg' }
 ];
 
@@ -192,8 +192,6 @@ export default function Home() {
              </h1>
            </div>
            <div className="hidden lg:flex flex-col text-right">
-             <span className="font-serif italic text-2xl border-b-2 pb-1" style={{ borderColor: 'var(--accent)', color: 'var(--foreground)' }}>Vol. CXXIV — No. 382</span>
-             <span className="text-[10px] font-black uppercase tracking-widest pt-2" style={{ color: 'var(--foreground)' }}>Price: Two Pence</span>
            </div>
          </div>
 
