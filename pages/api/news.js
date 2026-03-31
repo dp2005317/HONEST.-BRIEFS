@@ -26,7 +26,8 @@ const CATEGORY_FEEDS = {
   'Video News': [
     'https://www.youtube.com/feeds/videos.xml?channel_id=UCRWFSbif-RFENbBrSiez1DA', // ABP
     'https://www.youtube.com/feeds/videos.xml?channel_id=UCxZn4XGQmnsQYn-XnK2DqAA', // Zee
-    'https://www.youtube.com/feeds/videos.xml?channel_id=UCQfwfsi5VrQ8yKZ-UWmAEFg'  // France24
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCXBD5iG5cr4ZYZ99K-fmDHg', // NDTV
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCYPvAwZP8pZhSMW8qs7cVCw'  // India Today
   ]
 };
 

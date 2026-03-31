@@ -13,9 +13,8 @@ const fetcher = url => fetch(url).then(r => r.json());
 const LIVE_CHANNELS = [
   { name: 'ABP News', id: 'UCRWFSbif-RFENbBrSiez1DA' },
   { name: 'Zee News', id: 'UCxZn4XGQmnsQYn-XnK2DqAA' },
-  { name: 'France 24', id: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' },
-  { name: 'Al Jazeera', id: 'UCNye-wNBqNL5ZzHSJj3l8Bg' },
-  { name: 'DW News', id: 'UCknLrEdhRCp1aegoMqRaCZg' }
+  { name: 'NDTV', id: 'UCXBD5iG5cr4ZYZ99K-fmDHg' },
+  { name: 'India Today', id: 'UCYPvAwZP8pZhSMW8qs7cVCw' }
 ];
 
 export default function Home() {

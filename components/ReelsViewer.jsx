@@ -60,11 +60,11 @@ export default function ReelsViewer({ articles }) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <div className="w-full flex justify-center md:py-4 bg-black h-[100dvh] md:min-h-[85vh] md:h-auto">
+    <div className="w-full flex justify-center md:py-4 bg-black h-[calc(100dvh-4rem)] md:min-h-[85vh] md:h-auto">
       {/* Container for the reels, styled like a mobile screen aspect ratio */}
       <div 
         ref={containerRef}
-        className="relative w-full h-[100dvh] md:max-w-[420px] md:h-[85vh] overflow-y-scroll snap-y snap-mandatory bg-black md:bg-[#09090b] md:rounded-[2rem] md:shadow-2xl overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:border border-white/10"
+        className="relative w-full h-[calc(100dvh-4rem)] md:max-w-[420px] md:h-[85vh] overflow-y-scroll snap-y snap-mandatory bg-black md:bg-[#09090b] md:rounded-[2rem] md:shadow-2xl overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:border border-white/10"
       >
         {articles.map((article, index) => {
           const videoId = getVideoId(article.url);
