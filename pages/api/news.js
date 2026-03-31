@@ -22,7 +22,12 @@ const CATEGORY_FEEDS = {
   Science: ['https://www.space.com/feeds/all', 'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml', 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/-2128672765.cms'],
   Health: ['https://rss.nytimes.com/services/xml/rss/nyt/Health.xml', 'https://feeds.bbci.co.uk/news/health/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/3908999.cms'],
   India: ['https://www.thehindu.com/news/national/feeder/default.rss', 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms'],
-  World: ['https://www.aljazeera.com/xml/rss/all.xml', 'https://feeds.bbci.co.uk/news/world/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/296589292.cms']
+  World: ['https://www.aljazeera.com/xml/rss/all.xml', 'https://feeds.bbci.co.uk/news/world/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/296589292.cms'],
+  'Video News': [
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCRWFSbif-RFENbBrSiez1DA', // ABP
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCxZn4XGQmnsQYn-XnK2DqAA', // Zee
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCQfwfsi5VrQ8yKZ-UWmAEFg'  // France24
+  ]
 };
 
 function extractImage(item) {
@@ -38,9 +43,17 @@ function extractImage(item) {
     if (media.url) return media.url;
   }
 
-  // 3. Check media:thumbnail
-  if (item.mediaThumbnail && item.mediaThumbnail.$ && item.mediaThumbnail.$.url) {
-    return item.mediaThumbnail.$.url;
+  // 3. Check media:thumbnail (Common in YouTube RSS)
+  if (item.mediaThumbnail) {
+    if (item.mediaThumbnail.$ && item.mediaThumbnail.$.url) return item.mediaThumbnail.$.url;
+    if (item.mediaThumbnail.url) return item.mediaThumbnail.url;
+  }
+
+  // 4. Check media:group (YouTube specific)
+  if (item.mediaGroup && item.mediaGroup['media:thumbnail']) {
+    const thumb = item.mediaGroup['media:thumbnail'];
+    if (thumb.$ && thumb.$.url) return thumb.$.url;
+    if (thumb.url) return thumb.url;
   }
 
 
