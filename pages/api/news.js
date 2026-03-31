@@ -15,7 +15,8 @@ const parser = new Parser({
 const CATEGORY_FEEDS = {
   General: ['https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', 'http://rss.cnn.com/rss/edition.rss', 'https://feeds.bbci.co.uk/news/rss.xml'],
   Technology: ['https://www.theverge.com/rss/index.xml', 'https://techcrunch.com/feed/', 'https://feeds.bbci.co.uk/news/technology/rss.xml'],
-  Business: ['https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?id=10001147', 'https://feeds.bbci.co.uk/news/business/rss.xml'],
+  Education: ['https://feeds.bbci.co.uk/news/education/rss.xml', 'https://rss.nytimes.com/services/xml/rss/nyt/Education.xml'],
+  Business: ['https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', 'https://feeds.bbci.co.uk/news/business/rss.xml', 'https://moxie.foxbusiness.com/google-publisher/business.xml'],
   Sports: ['https://www.espn.com/espn/rss/news', 'https://sports.yahoo.com/rss/', 'https://feeds.bbci.co.uk/sport/rss.xml'],
   Entertainment: ['https://www.polygon.com/rss/index.xml', 'https://variety.com/feed/', 'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'],
   Science: ['https://www.space.com/feeds/all', 'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml', 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml'],
@@ -60,8 +61,10 @@ function extractImage(item) {
 }
 
 export default async function handler(req, res) {
-  const { category = 'General' } = req.query;
+  const { category = 'General', page = 1 } = req.query;
   const apiKey = process.env.GNEWS_API_KEY;
+
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
 
   try {
     // 1. If we have a GNEWS API Key, prioritize it for the best quality
@@ -71,16 +74,27 @@ export default async function handler(req, res) {
       const data = await response.json();
       
       if (data.articles) {
-        return res.status(200).json({
-          articles: data.articles.map(a => ({
-            title: a.title,
-            description: a.description,
-            image: a.image,
-            url: a.url,
-            source: a.source.name,
-            publishedAt: a.publishedAt
-          }))
-        });
+        let gnewsArticles = data.articles.map(a => ({
+          title: a.title,
+          description: a.description,
+          image: a.image,
+          url: a.url,
+          source: a.source.name,
+          publishedAt: a.publishedAt
+        }));
+
+        const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
+        gnewsArticles = gnewsArticles.filter(a => new Date(a.publishedAt) >= fifteenDaysAgo);
+        gnewsArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+        const pageNum = parseInt(page, 10) || 1;
+        const limit = 15;
+        const startIndex = (pageNum - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginated = gnewsArticles.slice(startIndex, endIndex);
+        const hasMore = endIndex < gnewsArticles.length;
+
+        return res.status(200).json({ articles: paginated, hasMore });
       }
     }
 
@@ -96,22 +110,38 @@ export default async function handler(req, res) {
     const allArticles = [];
 
     for (const url of feeds) {
-      const feed = await parser.parseURL(url);
-      const articles = feed.items.map(item => ({
-        title: item.title,
-        description: item.contentSnippet || item.description || '',
-        image: extractImage(item) || null,
-        url: item.link,
-        source: feed.title || 'News',
-        publishedAt: item.isoDate || new Date().toISOString()
-      }));
-      allArticles.push(...articles);
+      try {
+        const feed = await parser.parseURL(url);
+        const articles = feed.items.map(item => ({
+          title: item.title,
+          description: item.contentSnippet || item.description || '',
+          image: extractImage(item) || null,
+          url: item.link,
+          source: feed.title || 'News',
+          publishedAt: item.isoDate || new Date().toISOString()
+        }));
+        allArticles.push(...articles);
+      } catch (err) {
+        console.error(`Error parsing feed ${url}:`, err.message);
+      }
     }
 
-    // Sort by date and return
-    const sorted = allArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)).slice(0, 20);
-    
-    res.status(200).json({ articles: sorted });
+    // Filter for past 15 days
+    const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
+    let filteredArticles = allArticles.filter(a => new Date(a.publishedAt) >= fifteenDaysAgo);
+
+    // Sort by latest
+    filteredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+    // Pagination
+    const pageNum = parseInt(page, 10) || 1;
+    const limit = 15;
+    const startIndex = (pageNum - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginated = filteredArticles.slice(startIndex, endIndex);
+    const hasMore = endIndex < filteredArticles.length;
+
+    res.status(200).json({ articles: paginated, hasMore });
 
   } catch (error) {
     console.error("API Error:", error);

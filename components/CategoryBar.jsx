@@ -6,6 +6,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'Video News', label: 'Video News' },
   { id: 'India', label: 'India' },
   { id: 'Technology', label: 'Technology' },
+  { id: 'Education', label: 'Education' },
   { id: 'Business', label: 'Business' },
   { id: 'Sports', label: 'Sports' },
   { id: 'Entertainment', label: 'Entertainment' },

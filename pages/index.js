@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import useSWR from 'swr';
+import { useState, useEffect } from 'react';
+import useSWRInfinite from 'swr/infinite';
 import Layout from '@/components/Layout';
 import CategoryBar from '@/components/CategoryBar';
 import NewsCard from '@/components/NewsCard';
@@ -7,16 +7,14 @@ import Sidebar from '@/components/Sidebar';
 import MagazineView from '@/components/MagazineView';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
-import { useEffect } from 'react';
-
 const fetcher = url => fetch(url).then(r => r.json());
 
 const LIVE_CHANNELS = [
-  { name: 'NDTV 24x7', id: 'UCZFMm1mMw0F81Z37aaEzTUA' },
-  { name: 'Times Now', id: 'UC6RJ7-PaXg6TIH2BzZfTV7w' },
-  { name: 'Al Jazeera English', id: 'UCNye-wNBqNL5ZzHSJj3l8Bg' },
-  { name: 'DW News', id: 'UCknLrEdhRCp1aegoMqRaCZg' },
-  { name: 'France 24 English', id: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' }
+  { name: 'Sky News', id: 'UCoMdktPbSTixAyNGwb-UYkQ' },
+  { name: 'ABC News', id: 'UCBi2mrWuNuyYy4gbM6fU18Q' },
+  { name: 'Al Jazeera', id: 'UCNye-wNBqNL5ZzHSJj3l8Bg' },
+  { name: 'NBC News', id: 'UCeY0bbntWzzVIaj2z3QigXg' },
+  { name: 'DW News', id: 'UCknLrEdhRCp1aegoMqRaCZg' }
 ];
 
 export default function Home() {
@@ -61,11 +59,33 @@ export default function Home() {
     }
   }, [preferences, category]);
   
-  const { data, error, isLoading } = useSWR(category === 'Video News' ? null : `/api/news?category=${category}`, fetcher);
+  const getKey = (pageIndex, previousPageData) => {
+    if (category === 'Video News') return null;
+    if (previousPageData && !previousPageData.hasMore) return null;
+    return `/api/news?category=${category}&page=${pageIndex + 1}`;
+  };
 
-  const articles = data?.articles || [];
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher);
+
+  const isLoading = !data && !error;
+  const articles = data ? data.map(page => page.articles).flat() : [];
+  const hasMore = data ? data[data.length - 1]?.hasMore : false;
+  const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) {
+        if (hasMore && !isLoadingMore && !isValidating) {
+          setSize(size + 1);
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore, isLoadingMore, isValidating, setSize, size]);
+
   const featuredNews = articles.slice(0, 2);
-  const trendingNews = [...articles].reverse().slice(0, 5); 
+  const trendingNews = [...articles].slice(0, 50).reverse().slice(0, 5); // Limit reversing to first page to avoid shifting on scroll
   const gridNews = articles.slice(2);
 
   const isMagazine = theme === 'magazine';
@@ -92,7 +112,7 @@ export default function Home() {
                 <div className="w-full relative" style={{ paddingBottom: '56.25%', backgroundColor: '#111' }}>
                   <iframe
                     className="absolute top-0 left-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}`}
+                    src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}&autoplay=1&mute=1`}
                     title={`${channel.name} Live Stream`}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -176,7 +196,7 @@ export default function Home() {
                     <iframe
                       className="absolute top-0 left-0 w-full h-full"
                       style={{ borderRadius: 'var(--border-radius)' }}
-                      src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}`}
+                      src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}&autoplay=1&mute=1`}
                       title={`${channel.name} Live Stream`}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

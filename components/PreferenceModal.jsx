@@ -3,7 +3,7 @@ import { X, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const CATEGORIES = [
-  'General', 'Video News', 'India', 'Technology', 'Business', 'Sports', 'Entertainment', 'Science', 'Health', 'World'
+  'General', 'Video News', 'India', 'Technology', 'Education', 'Business', 'Sports', 'Entertainment', 'Science', 'Health', 'World'
 ];
 
 export default function PreferenceModal({ isOpen, onClose }) {
