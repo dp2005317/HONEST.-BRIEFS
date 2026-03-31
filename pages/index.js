@@ -120,9 +120,9 @@ export default function Home() {
   // ════════════════════════════════════════════
   if (isMagazine) {
     return (
-      <Layout onSearch={handleSearch} onTabChange={handleTabChange}>
+      <Layout onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
         {/* Slim category bar at top */}
-        <div className="mb-0">
+        <div className={`mb-0 ${activeCategory === 'Video News' ? 'hidden md:block' : ''}`}>
           <CategoryBar activeCategory={activeCategory} onCategoryChange={setCategory} />
         </div>
 
@@ -160,9 +160,9 @@ export default function Home() {
   // DAY & DARK THEMES — Standard newspaper layout
   // ════════════════════════════════════════════
   return (
-    <Layout onSearch={handleSearch} onTabChange={handleTabChange}>
+    <Layout onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
       {/* Newspaper Header */}
-      <div className="mb-12 pt-6 pb-10 relative group" style={{ borderBottom: `4px solid var(--accent)` }}>
+      <div className={`mb-12 pt-6 pb-10 relative group ${activeCategory === 'Video News' ? 'hidden md:block' : ''}`} style={{ borderBottom: `4px solid var(--accent)` }}>
          <div className="flex justify-between items-end mb-8">
            <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-40">
@@ -201,9 +201,11 @@ export default function Home() {
           )}
       </div>
 
-      <CategoryBar activeCategory={activeCategory} onCategoryChange={(cat) => { setCategory(cat); setSearchQuery(''); }} />
+      <div className={activeCategory === 'Video News' ? 'hidden md:block' : ''}>
+        <CategoryBar activeCategory={activeCategory} onCategoryChange={(cat) => { setCategory(cat); setSearchQuery(''); }} />
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-16 pb-32">
+      <div className={`flex flex-col lg:flex-row gap-16 pb-32 ${activeCategory === 'Video News' ? 'pb-0' : ''}`}>
         <div className="flex-1 w-full min-w-0">
           
           {activeCategory === 'Video News' ? (
@@ -240,7 +242,7 @@ export default function Home() {
           
         </div>
 
-        <div className="lg:w-80 flex-shrink-0">
+        <div className={`lg:w-80 flex-shrink-0 ${activeCategory === 'Video News' ? 'hidden md:block' : ''}`}>
            <Sidebar trendingNews={trendingNews} />
         </div>
       </div>

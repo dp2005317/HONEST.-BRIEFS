@@ -1,8 +1,9 @@
-import { Search, Menu, User, LogOut, Settings, Sun, Moon, Palette } from 'lucide-react';
+import { Search, Menu, User, LogOut, Settings, Sun, Moon, Palette, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useInstall } from '@/hooks/useInstall';
 import PreferenceModal from './PreferenceModal';
 
 const THEME_ICONS = {
@@ -23,6 +24,7 @@ export default function Navbar({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState('');
   const { user, logout, loginWithGoogle } = useAuth();
   const { theme, cycleTheme } = useTheme();
+  const { handleInstall, showInstallOptions, deferredPrompt } = useInstall();
 
   const ThemeIcon = THEME_ICONS[theme];
   
@@ -84,6 +86,19 @@ export default function Navbar({ onSearch }) {
                 <ThemeIcon className="h-4 w-4" />
               </button>
 
+              {/* Desktop Install App Button */}
+              {showInstallOptions && (
+                 <button 
+                   onClick={handleInstall}
+                   className="flex items-center gap-2 font-black text-[9px] tracking-widest uppercase py-1.5 px-3 border-2 transition-all active:scale-95"
+                   style={{ borderColor: 'var(--accent)', color: 'var(--btn-color)', backgroundColor: 'var(--accent)', borderRadius: 'var(--pill-radius)' }}
+                   title="Install App"
+                 >
+                   <Download className="h-3 w-3" />
+                   <span>{deferredPrompt ? 'Install App' : 'Add to Home'}</span>
+                 </button>
+              )}
+
 
               
               {user ? (
@@ -136,7 +151,7 @@ export default function Navbar({ onSearch }) {
               </div>
 
               {/* Search Icon - Left */}
-              <div className="flex-1 flex justify-start">
+              <div className="flex-1 flex justify-start items-center gap-1">
                 <button 
                   onClick={() => setIsMenuOpen(true)}
                   className="p-2 transition-all active:scale-90"
@@ -144,6 +159,17 @@ export default function Navbar({ onSearch }) {
                 >
                   <Search className="h-6 w-6" />
                 </button>
+                {/* Mobile Install App Button */}
+                {showInstallOptions && (
+                  <button 
+                    onClick={handleInstall}
+                    className="p-2 transition-all animate-pulse"
+                    style={{ color: 'var(--accent)' }}
+                    title="Install App"
+                  >
+                    <Download className="h-5 w-5" />
+                  </button>
+                )}
               </div>
 
               {/* Avatar/Profile - Right */}

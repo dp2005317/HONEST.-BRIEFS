@@ -3,9 +3,8 @@ import Navbar from './Navbar';
 import Head from 'next/head';
 import { useTheme } from '@/context/ThemeContext';
 import BottomNav from './BottomNav';
-import InstallPrompt from './InstallPrompt';
 
-export default function Layout({ children, onSearch, onTabChange }) {
+export default function Layout({ children, onSearch, onTabChange, hideUIOnMobile = false }) {
   const { theme, cycleTheme } = useTheme();
   const themeColor =
     theme === 'dark' ? '#09090b' : theme === 'magazine' ? '#1a1a1a' : '#ffffff';
@@ -35,22 +34,27 @@ export default function Layout({ children, onSearch, onTabChange }) {
       <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--background)', transition: 'background-color 0.4s ease' }} />
 
       {/* Content wrapper */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar onSearch={onSearch} />
-        <main className={`flex-grow w-full ${theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0'}`}>
+      <div className={`relative z-10 flex flex-col ${hideUIOnMobile ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
+        <div className={hideUIOnMobile ? 'hidden md:block' : ''}>
+          <Navbar onSearch={onSearch} />
+        </div>
+        <main className={`flex-grow w-full ${hideUIOnMobile ? 'h-full pt-0 pb-0' : (theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0')}`}>
           {children}
         </main>
-        <BottomNav activeTab="home" onTabChange={onTabChange} onThemeToggle={cycleTheme} />
-        <InstallPrompt />
+        <div className={hideUIOnMobile ? 'hidden md:block' : ''}>
+          <BottomNav activeTab="home" onTabChange={onTabChange} onThemeToggle={cycleTheme} />
+        </div>
       </div>
 
       {/* Footer Branding */}
-      <footer className="relative z-10 py-12 border-t" style={{ borderColor: 'var(--border-ink)', backgroundColor: 'var(--card-bg)', transition: 'all 0.4s ease' }}>
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="news-meta">© {new Date().getFullYear()} HONEST. Briefs Publisher</p>
-          <p className="text-[10px] uppercase font-bold tracking-widest mt-2 opacity-30">London • New York • New Delhi</p>
-        </div>
-      </footer>
+      <div className={hideUIOnMobile ? 'hidden md:block' : ''}>
+        <footer className="relative z-10 py-12 border-t" style={{ borderColor: 'var(--border-ink)', backgroundColor: 'var(--card-bg)', transition: 'all 0.4s ease' }}>
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="news-meta">© {new Date().getFullYear()} HONEST. Briefs Publisher</p>
+            <p className="text-[10px] uppercase font-bold tracking-widest mt-2 opacity-30">London • New York • New Delhi</p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
