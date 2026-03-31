@@ -128,46 +128,12 @@ export default function Home() {
         </div>
 
         {category === 'Video News' ? (
-          <div className="space-y-0">
-            {/* Live Streams Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px pb-8" style={{ backgroundColor: '#333' }}>
-              {LIVE_CHANNELS.slice(0, 2).map((channel, i) => (
-                <div key={`live-${i}`} className="md:col-span-1" style={{ backgroundColor: '#1a1a1a' }}>
-                  <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: '#333' }}>
-                    <h2 className="font-magazine text-xl font-bold uppercase tracking-tight text-[#f0ece4]">{channel.name} Live</h2>
-                    <a 
-                      href={`https://www.youtube.com/channel/${channel.id}/live`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] uppercase font-black tracking-widest px-3 py-1 hover:opacity-80 transition-opacity" 
-                      style={{ backgroundColor: '#C9A96E', color: '#111' }}
-                    >
-                      Watch Live
-                    </a>
-                  </div>
-                  <div className="w-full relative" style={{ paddingBottom: '56.25%', backgroundColor: '#111' }}>
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}&mute=1`}
-                      title={`${channel.name} Live Stream`}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Latest Clips Section */}
-            <div className="p-6 border-t" style={{ backgroundColor: '#111', borderColor: '#222' }}>
-               <h3 className="font-magazine text-3xl font-bold uppercase tracking-tighter text-[#f0ece4] mb-8 pt-4">Latest Bulletins</h3>
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 {articles.map((article, i) => (
-                   <NewsCard key={`clip-${i}`} article={article} />
-                 ))}
-               </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px pb-8" style={{ backgroundColor: '#333' }}>
+            {articles.map((article, i) => (
+              <div key={`video-${i}`} className="bg-[#1a1a1a]">
+                <NewsCard article={article} />
+              </div>
+            ))}
           </div>
         ) : isLoading ? (
           <div className="space-y-0 animate-pulse">
@@ -204,9 +170,9 @@ export default function Home() {
       <div className="mb-12 pt-6 pb-10 relative group" style={{ borderBottom: `4px solid var(--accent)` }}>
          <div className="flex justify-between items-end mb-8">
            <div className="flex flex-col">
-             <span className="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-40">
-               Weather: {weather} • {userCity ? `${userCity} EDITION` : 'LONDON EDITION'} • Early Morning Bulletin
-             </span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-40">
+                Weather: {weather} • {userCity ? `${userCity} EDITION` : 'LONDON EDITION'}
+              </span>
              <h1 className="text-6xl md:text-9xl font-serif font-black tracking-tighter leading-none group-hover:opacity-75 transition-opacity" style={{ color: 'var(--foreground)' }}>
                HONEST. Briefs
              </h1>
@@ -246,50 +212,10 @@ export default function Home() {
         <div className="flex-1 w-full min-w-0">
           
           {category === 'Video News' ? (
-            <div className="space-y-16">
-              {/* Live Streams */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-                {LIVE_CHANNELS.slice(0, 2).map((channel, i) => (
-                  <div key={`live-${i}`} className="p-2" style={{ border: `4px solid var(--accent)`, backgroundColor: 'var(--card-bg)', borderRadius: 'var(--border-radius)' }}>
-                    <div className="mb-4 pt-2 px-2 border-b-2 pb-2 flex items-center justify-between" style={{ borderColor: 'var(--accent)' }}>
-                      <h2 className="font-serif font-black text-2xl italic tracking-tight" style={{ color: 'var(--foreground)' }}>{channel.name} Live</h2>
-                      <div className="flex gap-2">
-                        <a 
-                          href={`https://www.youtube.com/channel/${channel.id}/live`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-white text-[9px] uppercase font-black tracking-widest px-2 py-1 hover:brightness-110 active:scale-95 transition-all" 
-                          style={{ backgroundColor: 'var(--accent)', borderRadius: 'var(--pill-radius)', color: 'var(--btn-color)' }}
-                        >
-                          Watch on YouTube
-                        </a>
-                        <span className="text-white text-[10px] uppercase font-black tracking-widest px-2 py-1 animate-pulse" style={{ backgroundColor: 'var(--live-badge)', borderRadius: 'var(--pill-radius)' }}>Live</span>
-                      </div>
-                    </div>
-                    <div className="w-full relative" style={{ paddingBottom: '56.25%', backgroundColor: 'var(--skeleton-bg)', borderRadius: 'var(--border-radius)' }}>
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full"
-                        style={{ borderRadius: 'var(--border-radius)' }}
-                        src={`https://www.youtube.com/embed/live_stream?channel=${channel.id}&mute=1`}
-                        title={`${channel.name} Live Stream`}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Latest News Clips */}
-              <div className="pt-8 border-t-8 border-double" style={{ borderColor: 'var(--accent)' }}>
-                 <h3 className="text-4xl font-serif font-black italic underline underline-offset-8 mb-12" style={{ color: 'var(--foreground)' }}>Latest Bulletins</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                   {articles.map((article, i) => (
-                     <NewsCard key={`clip-${i}`} article={article} />
-                   ))}
-                 </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+              {articles.map((article, i) => (
+                <NewsCard key={`video-${i}`} article={article} />
+              ))}
             </div>
           ) : isLoading ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">

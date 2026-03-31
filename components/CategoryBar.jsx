@@ -9,7 +9,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'Education', label: 'Education' },
   { id: 'Business', label: 'Business' },
   { id: 'Sports', label: 'Sports' },
-  { id: 'Entertainment', label: 'Entertainment' },
+  { id: 'Film & Entertainment', label: 'Film & Entertainment' },
   { id: 'Science', label: 'Science' },
   { id: 'Health', label: 'Health' },
   { id: 'World', label: 'World' }

@@ -18,7 +18,7 @@ const CATEGORY_FEEDS = {
   Education: ['https://feeds.bbci.co.uk/news/education/rss.xml', 'https://rss.nytimes.com/services/xml/rss/nyt/Education.xml', 'https://timesofindia.indiatimes.com/rssfeeds/9131688468.cms'],
   Business: ['https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', 'https://feeds.bbci.co.uk/news/business/rss.xml', 'https://moxie.foxbusiness.com/google-publisher/business.xml', 'https://timesofindia.indiatimes.com/rssfeeds/1898055.cms'],
   Sports: ['https://www.espn.com/espn/rss/news', 'https://sports.yahoo.com/rss/', 'https://feeds.bbci.co.uk/sport/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/4719148.cms'],
-  Entertainment: ['https://www.polygon.com/rss/index.xml', 'https://variety.com/feed/', 'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms'],
+  'Film & Entertainment': ['https://www.polygon.com/rss/index.xml', 'https://variety.com/feed/', 'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms'],
   Science: ['https://www.space.com/feeds/all', 'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml', 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/-2128672765.cms'],
   Health: ['https://rss.nytimes.com/services/xml/rss/nyt/Health.xml', 'https://feeds.bbci.co.uk/news/health/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/3908999.cms'],
   India: ['https://www.thehindu.com/news/national/feeder/default.rss', 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms'],
@@ -54,24 +54,47 @@ function extractImage(item) {
      const mg = item.mediaGroup;
      // Sometimes it is flattened, sometimes nested
      const thumb = mg['media:thumbnail'] || mg.mediaThumbnail || (mg.$ && mg.$['media:thumbnail']);
-     if (thumb) {
-       if (thumb.$ && thumb.$.url) return thumb.$.url;
-       if (thumb.url) return thumb.url;
-       if (Array.isArray(thumb) && thumb[0].$) return thumb[0].$.url;
-     }
+      if (thumb) {
+        if (thumb.$ && thumb.$.url) return thumb.$.url;
+        if (thumb.url) return thumb.url;
+        if (Array.isArray(thumb) && thumb[0].$) return thumb[0].$.url;
+      }
+  }
+
+  // 4b. Check media:content (nested)
+  if (item.mediaGroup && item.mediaGroup['media:content']) {
+    const mc = item.mediaGroup['media:content'];
+    const media = Array.isArray(mc) ? mc[0] : mc;
+    if (media.$ && media.$.url) return media.$.url;
   }
 
 
-
-  // 5. Regex fallback from content or description (finding first <img> tag)
-  const content = item.contentEncoded || item.content || item.description || '';
-  const imgRegex = /<img[^>]+src=["']([^"']+)["']/i;
-  const match = content.match(imgRegex);
-  if (match && match[1]) {
-    return match[1];
-  }
+   // 5. Check enclosure (Standard RSS images)
+   if (item.enclosure && item.enclosure.url) {
+     return item.enclosure.url;
+   }
+ 
+    // 6. Regex fallback from content or description (finding first <img> tag)
+    const combinedContent = (item.contentEncoded || '') + (item.content || '') + (item.description || '') + (item.contentSnippet || '');
+    const imgMatch = combinedContent.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (imgMatch && imgMatch[1]) {
+      // Clean up relative URLs if any
+      let url = imgMatch[1];
+      if (url.startsWith('//')) url = 'https:' + url;
+      return url;
+    }
 
   return null;
+}
+
+function getFallbackImage(articleUrl) {
+  try {
+    const domain = new URL(articleUrl).hostname;
+    // Use Google's high-res favicon service (sz=128 for luxury look)
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  } catch (e) {
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -112,7 +135,7 @@ export default async function handler(req, res) {
         const articles = feed.items.map(item => ({
           title: item.title,
           description: item.contentSnippet || item.description || '',
-          image: extractImage(item) || null,
+          image: extractImage(item) || getFallbackImage(item.link),
           url: item.link,
           source: feed.title || 'News',
           publishedAt: item.isoDate || new Date().toISOString()
@@ -161,7 +184,7 @@ export default async function handler(req, res) {
           const articles = feed.items.map(item => ({
             title: item.title,
             description: item.contentSnippet || item.description || '',
-            image: extractImage(item) || null,
+            image: extractImage(item) || getFallbackImage(item.link),
             url: item.link,
             source: feed.title || 'News',
             publishedAt: item.isoDate || new Date().toISOString()

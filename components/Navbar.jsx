@@ -84,7 +84,7 @@ export default function Navbar({ onSearch }) {
                 <ThemeIcon className="h-4 w-4" />
               </button>
 
-              <button className="text-[10px] font-black uppercase tracking-[0.25em] opacity-40 hover:opacity-100 transition-opacity">Digital Archives</button>
+
               
               {user ? (
                  <div className="flex items-center gap-6">
