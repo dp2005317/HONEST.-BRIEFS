@@ -82,19 +82,30 @@ export default function PreferenceModal({ isOpen, onClose }) {
         </div>
 
         <div className="flex flex-col gap-4">
-           <button 
-             onClick={handleSave}
-             className="w-full py-5 font-black uppercase tracking-[0.3em] text-xs transition-colors"
-             style={{ backgroundColor: 'var(--btn-bg)', color: 'var(--btn-color)', borderRadius: 'var(--pill-radius)' }}
-           >
-             Save Preferences
-           </button>
-           <button 
-             onClick={onClose}
-             className="w-full py-4 text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
-           >
-             Dismiss for now
-           </button>
+            <button 
+              onClick={handleSave}
+              className="w-full py-5 font-black uppercase tracking-[0.3em] text-xs transition-colors"
+              style={{ backgroundColor: 'var(--btn-bg)', color: 'var(--btn-color)', borderRadius: 'var(--pill-radius)' }}
+            >
+              Save Preferences
+            </button>
+            
+            {useAuth().user && (
+              <button 
+                onClick={() => { useAuth().logout(); onClose(); }}
+                className="w-full py-3 border-2 font-black uppercase tracking-widest text-[9px] opacity-60 hover:opacity-100 transition-all"
+                style={{ borderColor: 'var(--accent)', color: 'var(--foreground)', borderRadius: 'var(--pill-radius)' }}
+              >
+                Sign Out / Logout
+              </button>
+            )}
+
+            <button 
+              onClick={onClose}
+              className="w-full py-2 text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
+            >
+              Dismiss for now
+            </button>
         </div>
       </div>
     </div>

@@ -14,5 +14,12 @@
         "supportEmail": "extinctmatter9@gmail.com"
       }
     }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

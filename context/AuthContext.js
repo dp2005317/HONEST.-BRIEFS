@@ -40,17 +40,23 @@ export function AuthProvider({ children }) {
               interestedTopics: [],
               createdAt: new Date().toISOString()
             });
+            console.log("Firestore: Created new user profile for", firebaseUser.email);
           }
 
           if (unsubPrefs) unsubPrefs(); // clear previous if any
-          unsubPrefs = onSnapshot(userDocRef, (doc) => {
-            if (doc.exists()) {
-              setPreferences(doc.data());
+          unsubPrefs = onSnapshot(userDocRef, (snapshot) => {
+            if (snapshot.exists()) {
+              setPreferences(snapshot.data());
             }
+          }, (error) => {
+             console.error("Firestore Snapshot Error:", error);
           });
         } catch (dbError) {
-          console.error("Firestore Error on Init:", dbError);
-          alert(`ACTION REQUIRED: Cloud Firestore Database not found or permission denied.\n\nPlease go to Firebase Console (studio-5026483346-4f14a) -> Firestore Database -> 'Create database'. Start in Production mode.\n\nError details: ${dbError.message}`);
+          console.error("Firestore Initialization Error:", dbError);
+          // Only alert if it's a critical missing database or permission issue
+          if (dbError.code === 'permission-denied' || dbError.code === 'not-found') {
+            alert(`ACTION REQUIRED: Cloud Firestore Database not found or permission denied.\n\nPlease go to Firebase Console (streamly-a54ac) -> Firestore Database -> 'Create database'. Start in Production mode.\n\nError details: ${dbError.message}`);
+          }
         }
 
       } else {
@@ -77,7 +83,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error("Error signing in with Google:", error);
       if (error.code === 'auth/configuration-not-found') {
-        alert("ACTION REQUIRED: Firebase Authentication is currently disabled for this project.\n\nPlease go to your Firebase Console (studio-5026483346-4f14a) -> Authentication -> Sign-in Method, and explicitly enable 'Google' as a provider.");
+        alert("ACTION REQUIRED: Firebase Authentication is currently disabled for this project.\n\nPlease go to your Firebase Console (streamly-a54ac) -> Authentication -> Sign-in Method, and explicitly enable 'Google' as a provider.");
       } else if (error.code === 'auth/unauthorized-domain') {
         alert("ACTION REQUIRED: You enabled Google Sign-In, but Firebase is blocking this Vercel URL!\n\n1. Go to Firebase Console -> Authentication -> Settings (tab) -> Authorized domains.\n2. Click 'Add domain' and paste: the-daily-edition-tau.vercel.app\n3. Save and try again.");
       } else {
@@ -101,7 +107,7 @@ export function AuthProvider({ children }) {
       await setDoc(userDocRef, { interestedTopics: newTopics }, { merge: true });
     } catch (error) {
       console.error("Error updating preferences", error);
-      alert(`ACTION REQUIRED: Failed to save preferences.\n\nEnsure you have created a 'Cloud Firestore' database in your Firebase Console (studio-5026483346-4f14a). Error: ${error.message}`);
+      alert(`ACTION REQUIRED: Failed to save preferences.\n\nEnsure you have created a 'Cloud Firestore' database in your Firebase Console (streamly-a54ac). Error: ${error.message}`);
     }
   };
 

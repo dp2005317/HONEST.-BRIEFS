@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Head from 'next/head';
 import { useTheme } from '@/context/ThemeContext';
+import BottomNav from './BottomNav';
 
-export default function Layout({ children }) {
-  const { theme } = useTheme();
+export default function Layout({ children, onSearch, onTabChange }) {
+  const { theme, cycleTheme } = useTheme();
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
@@ -20,10 +21,11 @@ export default function Layout({ children }) {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar />
-        <main className={`flex-grow w-full ${theme === 'magazine' ? 'pt-20 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12'}`}>
+        <Navbar onSearch={onSearch} />
+        <main className={`flex-grow w-full ${theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0'}`}>
           {children}
         </main>
+        <BottomNav activeTab="home" onTabChange={onTabChange} onThemeToggle={cycleTheme} />
       </div>
 
       {/* Footer Branding */}
