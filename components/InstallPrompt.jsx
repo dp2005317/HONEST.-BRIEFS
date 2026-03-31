@@ -1,9 +1,12 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Download, Share2 } from 'lucide-react';
 
+let cachedState = null;
+const serverState = { isInstalled: true, showIosHint: false };
+
 function getInstallState() {
   if (typeof window === 'undefined') {
-    return { isInstalled: true, showIosHint: false };
+    return serverState;
   }
 
   const isInstalled =
@@ -13,10 +16,17 @@ function getInstallState() {
   const isIos = /iPad|iPhone|iPod/.test(ua);
   const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS/.test(ua);
 
-  return {
+  const showIosHint = isIos && isSafari && !isInstalled;
+
+  if (cachedState && cachedState.isInstalled === isInstalled && cachedState.showIosHint === showIosHint) {
+    return cachedState;
+  }
+
+  cachedState = {
     isInstalled,
-    showIosHint: isIos && isSafari && !isInstalled,
+    showIosHint,
   };
+  return cachedState;
 }
 
 function subscribeToInstallState(callback) {
@@ -41,7 +51,7 @@ export default function InstallPrompt() {
   const { isInstalled, showIosHint } = useSyncExternalStore(
     subscribeToInstallState,
     getInstallState,
-    () => ({ isInstalled: true, showIosHint: false })
+    () => serverState
   );
 
   useEffect(() => {
