@@ -1,4 +1,5 @@
 import Parser from 'rss-parser';
+import ytch from 'yt-channel-info';
 
 const parser = new Parser({
   customFields: {
@@ -23,13 +24,27 @@ const CATEGORY_FEEDS = {
   Health: ['https://rss.nytimes.com/services/xml/rss/nyt/Health.xml', 'https://feeds.bbci.co.uk/news/health/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/3908999.cms'],
   India: ['https://www.thehindu.com/news/national/feeder/default.rss', 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms'],
   World: ['https://www.aljazeera.com/xml/rss/all.xml', 'https://feeds.bbci.co.uk/news/world/rss.xml', 'https://timesofindia.indiatimes.com/rssfeeds/296589292.cms'],
-  'Video News': [
-    'https://www.youtube.com/feeds/videos.xml?channel_id=UCRWFSbif-RFENbBrSiez1DA', // ABP
-    'https://www.youtube.com/feeds/videos.xml?channel_id=UCxZn4XGQmnsQYn-XnK2DqAA', // Zee
-    'https://www.youtube.com/feeds/videos.xml?channel_id=UCXBD5iG5cr4ZYZ99K-fmDHg', // NDTV
-    'https://www.youtube.com/feeds/videos.xml?channel_id=UCYPvAwZP8pZhSMW8qs7cVCw'  // India Today
-  ]
+  'Video News': [] // Handled custom by yt-channel-info
 };
+
+function parseYTDate(text) {
+  if (!text) return new Date().toISOString();
+  const lower = text.toLowerCase();
+  let msToSubtract = 0;
+  
+  const extractNum = (str) => parseInt(str.match(/\d+/)?.[0] || '1', 10);
+  const num = extractNum(lower);
+  
+  if (lower.includes('second')) msToSubtract = num * 1000;
+  else if (lower.includes('minute')) msToSubtract = num * 60000;
+  else if (lower.includes('hour')) msToSubtract = num * 3600000;
+  else if (lower.includes('day')) msToSubtract = num * 86400000;
+  else if (lower.includes('week')) msToSubtract = num * 604800000;
+  else if (lower.includes('month')) msToSubtract = num * 2592000000;
+  else if (lower.includes('year')) msToSubtract = num * 31536000000;
+  
+  return new Date(Date.now() - msToSubtract).toISOString();
+}
 
 function extractImage(item) {
   // 1. Check enclosure
@@ -172,27 +187,78 @@ export default async function handler(req, res) {
 
       // RSS Fallback/Integration
       let feeds = [];
-      if (category.startsWith('Local_')) {
-        const countryCode = category.replace('Local_', '');
-        feeds = [`https://news.google.com/rss/headlines/section/geo/${countryCode}`];
-      } else {
-        feeds = CATEGORY_FEEDS[category] || CATEGORY_FEEDS['General'];
-      }
+      if (category === 'Video News') {
+        const channelIds = [
+          'UCRWFSbif-RFENbBrSiez1DA', // ABP
+          'UCxZn4XGQmnsQYn-XnK2DqAA', // Zee
+          'UCXBD5iG5cr4ZYZ99K-fmDHg', // NDTV
+          'UCYPvAwZP8pZhSMW8qs7cVCw'  // India Today
+        ];
 
-      for (const url of feeds) {
-        try {
-          const feed = await parser.parseURL(url);
-          const articles = feed.items.map(item => ({
-            title: item.title,
-            description: item.contentSnippet || item.description || '',
-            image: extractImage(item) || getFallbackImage(item.link),
-            url: item.link,
-            source: feed.title || 'News',
-            publishedAt: item.isoDate || new Date().toISOString()
-          }));
-          allArticles.push(...articles);
-        } catch (err) {
-          console.error(`Error parsing feed ${url}:`, err.message);
+        for (const channelId of channelIds) {
+          try {
+            const mapVideo = (v, type) => ({
+               title: v.title,
+               description: `YouTube ${type}${v.isLiveNow ? " (LIVE)" : ""}`,
+               image: v.videoThumbnails?.[v.videoThumbnails.length - 1]?.url || getFallbackImage(`https://youtube.com`),
+               url: `https://www.youtube.com/watch?v=${v.videoId}`,
+               source: v.author,
+               publishedAt: parseYTDate(v.publishedText)
+            });
+
+            // 1. Fetch Streams
+            const streamRes = await ytch.getChannelVideos({ channelId, sortBy: 'newest', videoType: 'streams' }).catch(() => ({ items: [] }));
+            const streams = (streamRes.items || []).slice(0, 5); // Take up to 5 latest streams (including live)
+
+            // 2. Fetch Regular Videos
+            const videoRes = await ytch.getChannelVideos({ channelId, channelIdType: 0 }).catch(() => ({ items: [] }));
+            let videos = videoRes.items || [];
+            // Filter videos for the past 48 hours
+            videos = videos.filter(v => {
+              const dateIso = parseYTDate(v.publishedText);
+              return (Date.now() - new Date(dateIso).getTime()) <= (48 * 3600000); // 48 hours
+            });
+
+            // 3. Fetch Shorts
+            const shortRes = await ytch.getChannelVideos({ channelId, sortBy: 'newest', videoType: 'shorts' }).catch(() => ({ items: [] }));
+            let shorts = shortRes.items || [];
+            // Filter shorts for the past 48 hours
+            shorts = shorts.filter(v => {
+              const dateIso = parseYTDate(v.publishedText);
+              return (Date.now() - new Date(dateIso).getTime()) <= (48 * 3600000); 
+            });
+
+            allArticles.push(...streams.map(v => mapVideo(v, 'Stream')));
+            allArticles.push(...videos.map(v => mapVideo(v, 'Video')));
+            allArticles.push(...shorts.map(v => mapVideo(v, 'Shorts')));
+
+          } catch (e) {
+            console.error(`YT scraping failed for ${channelId}:`, e);
+          }
+        }
+      } else {
+        if (category.startsWith('Local_')) {
+          const countryCode = category.replace('Local_', '');
+          feeds = [`https://news.google.com/rss/headlines/section/geo/${countryCode}`];
+        } else {
+          feeds = CATEGORY_FEEDS[category] || CATEGORY_FEEDS['General'];
+        }
+
+        for (const url of feeds) {
+          try {
+            const feed = await parser.parseURL(url);
+            const articles = feed.items.map(item => ({
+              title: item.title,
+              description: item.contentSnippet || item.description || '',
+              image: extractImage(item) || getFallbackImage(item.link),
+              url: item.link,
+              source: feed.title || 'News',
+              publishedAt: item.isoDate || new Date().toISOString()
+            }));
+            allArticles.push(...articles);
+          } catch (err) {
+            console.error(`Error parsing feed ${url}:`, err.message);
+          }
         }
       }
     }
