@@ -50,10 +50,15 @@ function extractImage(item) {
   }
 
   // 4. Check media:group (YouTube specific)
-  if (item.mediaGroup && item.mediaGroup['media:thumbnail']) {
-    const thumb = item.mediaGroup['media:thumbnail'];
-    if (thumb.$ && thumb.$.url) return thumb.$.url;
-    if (thumb.url) return thumb.url;
+  if (item.mediaGroup) {
+     const mg = item.mediaGroup;
+     // Sometimes it is flattened, sometimes nested
+     const thumb = mg['media:thumbnail'] || mg.mediaThumbnail || (mg.$ && mg.$['media:thumbnail']);
+     if (thumb) {
+       if (thumb.$ && thumb.$.url) return thumb.$.url;
+       if (thumb.url) return thumb.url;
+       if (Array.isArray(thumb) && thumb[0].$) return thumb[0].$.url;
+     }
   }
 
 
