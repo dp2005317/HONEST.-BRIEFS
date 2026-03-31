@@ -5,6 +5,7 @@ import CategoryBar from '@/components/CategoryBar';
 import NewsCard from '@/components/NewsCard';
 import Sidebar from '@/components/Sidebar';
 import MagazineView from '@/components/MagazineView';
+import ReelsViewer from '@/components/ReelsViewer';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 const fetcher = url => fetch(url).then(r => r.json());
@@ -126,12 +127,8 @@ export default function Home() {
         </div>
 
         {activeCategory === 'Video News' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px pb-8" style={{ backgroundColor: '#333' }}>
-            {articles.map((article, i) => (
-              <div key={`video-${i}`} className="bg-[#1a1a1a]">
-                <NewsCard article={article} />
-              </div>
-            ))}
+          <div className="w-full">
+            <ReelsViewer articles={articles} />
           </div>
         ) : isLoading ? (
           <div className="space-y-0 animate-pulse">
@@ -210,10 +207,8 @@ export default function Home() {
         <div className="flex-1 w-full min-w-0">
           
           {activeCategory === 'Video News' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-              {articles.map((article, i) => (
-                <NewsCard key={`video-${i}`} article={article} />
-              ))}
+            <div className="w-full">
+              <ReelsViewer articles={articles} />
             </div>
           ) : isLoading ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">
