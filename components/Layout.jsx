@@ -38,7 +38,7 @@ export default function Layout({ children, onSearch, onTabChange, hideUIOnMobile
         <div className={hideUIOnMobile ? 'hidden md:block' : ''}>
           <Navbar onSearch={onSearch} />
         </div>
-        <main className={`flex-grow w-full flex justify-center ${hideUIOnMobile ? 'h-full pt-0 pb-0 md:h-auto md:max-w-7xl md:mx-auto md:px-4 sm:px-6 lg:px-8 md:pt-12 md:pb-12 mb-16 md:mb-0' : (theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0')}`}>
+        <main className={`flex-grow w-full ${hideUIOnMobile ? 'h-full pt-0 pb-0 md:h-auto md:max-w-7xl md:mx-auto md:px-4 sm:px-6 lg:px-8 md:pt-12 md:pb-12 mb-16 md:mb-0' : (theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0')}`}>
           {children}
         </main>
         <BottomNav activeTab={activeTab || "home"} onTabChange={onTabChange} onThemeToggle={cycleTheme} />
