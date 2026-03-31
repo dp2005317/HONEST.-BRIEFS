@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useTheme } from '@/context/ThemeContext';
 import BottomNav from './BottomNav';
 
-export default function Layout({ children, onSearch, onTabChange, hideUIOnMobile = false }) {
+export default function Layout({ children, onSearch, onTabChange, hideUIOnMobile = false, activeTab }) {
   const { theme, cycleTheme } = useTheme();
   const themeColor =
     theme === 'dark' ? '#09090b' : theme === 'magazine' ? '#1a1a1a' : '#ffffff';
@@ -34,14 +34,14 @@ export default function Layout({ children, onSearch, onTabChange, hideUIOnMobile
       <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--background)', transition: 'background-color 0.4s ease' }} />
 
       {/* Content wrapper */}
-      <div className={`relative z-10 flex flex-col ${hideUIOnMobile ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
+      <div className={`relative z-10 flex flex-col ${hideUIOnMobile ? 'h-[100dvh] max-h-[100dvh] overflow-hidden md:h-auto md:max-h-none md:overflow-visible md:min-h-screen' : 'min-h-screen'}`}>
         <div className={hideUIOnMobile ? 'hidden md:block' : ''}>
           <Navbar onSearch={onSearch} />
         </div>
-        <main className={`flex-grow w-full ${hideUIOnMobile ? 'h-full pt-0 pb-0' : (theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0')}`}>
+        <main className={`flex-grow w-full flex justify-center ${hideUIOnMobile ? 'h-full pt-0 pb-0 md:h-auto md:max-w-7xl md:mx-auto md:px-4 sm:px-6 lg:px-8 md:pt-12 md:pb-12 mb-16 md:mb-0' : (theme === 'magazine' ? 'pt-12 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12 mb-16 md:mb-0')}`}>
           {children}
         </main>
-        <BottomNav activeTab="home" onTabChange={onTabChange} onThemeToggle={cycleTheme} />
+        <BottomNav activeTab={activeTab || "home"} onTabChange={onTabChange} onThemeToggle={cycleTheme} />
       </div>
 
       {/* Footer Branding */}

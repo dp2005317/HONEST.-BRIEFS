@@ -119,7 +119,7 @@ export default function Home() {
   // ════════════════════════════════════════════
   if (isMagazine) {
     return (
-      <Layout onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
+      <Layout activeTab={activeCategory === 'Video News' ? 'Video News' : 'home'} onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
         {/* Slim category bar at top */}
         <div className={`mb-0 ${activeCategory === 'Video News' ? 'hidden md:block' : ''}`}>
           <CategoryBar activeCategory={activeCategory} onCategoryChange={setCategory} />
@@ -159,7 +159,7 @@ export default function Home() {
   // DAY & DARK THEMES — Standard newspaper layout
   // ════════════════════════════════════════════
   return (
-    <Layout onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
+    <Layout activeTab={activeCategory === 'Video News' ? 'Video News' : 'home'} onSearch={handleSearch} onTabChange={handleTabChange} hideUIOnMobile={activeCategory === 'Video News'}>
       {/* Newspaper Header */}
       <div className={`mb-12 pt-6 pb-10 relative group ${activeCategory === 'Video News' ? 'hidden md:block' : ''}`} style={{ borderBottom: `4px solid var(--accent)` }}>
          <div className="flex justify-between items-end mb-8">
