@@ -24,6 +24,10 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [userCity, setUserCity] = useState(null);
   const [weather, setWeather] = useState('FOGGY');
+  const activeCategory =
+    !searchQuery && category === 'General' && preferences?.interestedTopics?.length > 0
+      ? preferences.interestedTopics[0]
+      : category;
 
   useEffect(() => {
     fetch('https://ipinfo.io/json')
@@ -54,12 +58,6 @@ export default function Home() {
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (preferences?.interestedTopics?.length > 0 && category === 'General') {
-      setCategory(preferences.interestedTopics[0]);
-    }
-  }, [preferences, category]);
-  
   const getKey = (pageIndex, previousPageData) => {
     if (previousPageData && !previousPageData.hasMore) return null;
     
@@ -68,7 +66,7 @@ export default function Home() {
       return `/api/news?q=${encodeURIComponent(searchQuery)}&page=${pageIndex + 1}`;
     }
     
-    return `/api/news?category=${category}&page=${pageIndex + 1}`;
+    return `/api/news?category=${activeCategory}&page=${pageIndex + 1}`;
   };
 
   const { data, error, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher);
@@ -124,10 +122,10 @@ export default function Home() {
       <Layout onSearch={handleSearch} onTabChange={handleTabChange}>
         {/* Slim category bar at top */}
         <div className="mb-0">
-          <CategoryBar activeCategory={category} onCategoryChange={setCategory} />
+          <CategoryBar activeCategory={activeCategory} onCategoryChange={setCategory} />
         </div>
 
-        {category === 'Video News' ? (
+        {activeCategory === 'Video News' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px pb-8" style={{ backgroundColor: '#333' }}>
             {articles.map((article, i) => (
               <div key={`video-${i}`} className="bg-[#1a1a1a]">
@@ -152,7 +150,7 @@ export default function Home() {
         ) : (
           <MagazineView
             articles={articles}
-            category={category}
+            category={activeCategory}
             weather={weather}
             userCity={userCity}
           />
@@ -184,7 +182,7 @@ export default function Home() {
          <div className="flex items-center gap-6 border-t pt-6" style={{ borderColor: 'var(--border-ink)' }}>
            <p className="font-black uppercase tracking-[0.3em] text-[11px]" style={{ color: 'var(--foreground)' }}>Publishing House</p>
            <div className="w-2 h-2 rotate-45" style={{ backgroundColor: 'var(--accent)' }} />
-           <p className="font-black uppercase tracking-[0.3em] text-[11px]" style={{ color: 'var(--foreground)' }}>{category}</p>
+           <p className="font-black uppercase tracking-[0.3em] text-[11px]" style={{ color: 'var(--foreground)' }}>{activeCategory}</p>
            <div className="flex-1 border-t border-dashed" style={{ borderColor: 'var(--border-ink)' }} />
            <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
          </div>
@@ -206,12 +204,12 @@ export default function Home() {
           )}
       </div>
 
-      <CategoryBar activeCategory={category} onCategoryChange={(cat) => { setCategory(cat); setSearchQuery(''); }} />
+      <CategoryBar activeCategory={activeCategory} onCategoryChange={(cat) => { setCategory(cat); setSearchQuery(''); }} />
 
       <div className="flex flex-col lg:flex-row gap-16 pb-32">
         <div className="flex-1 w-full min-w-0">
           
-          {category === 'Video News' ? (
+          {activeCategory === 'Video News' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
               {articles.map((article, i) => (
                 <NewsCard key={`video-${i}`} article={article} />

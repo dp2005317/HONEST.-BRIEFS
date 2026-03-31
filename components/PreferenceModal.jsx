@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -7,28 +7,28 @@ const CATEGORIES = [
 ];
 
 export default function PreferenceModal({ isOpen, onClose }) {
-  const { preferences, updatePreferences } = useAuth();
-  const [selectedTopics, setSelectedTopics] = useState([]);
-
-  useEffect(() => {
-    if (preferences?.interestedTopics) {
-      setSelectedTopics(preferences.interestedTopics);
-    }
-  }, [preferences]);
+  const { user, logout, preferences, updatePreferences } = useAuth();
+  const [draftTopics, setDraftTopics] = useState(null);
+  const selectedTopics = draftTopics ?? preferences?.interestedTopics ?? [];
 
   if (!isOpen) return null;
 
+  const handleClose = () => {
+    setDraftTopics(null);
+    onClose();
+  };
+
   const toggleTopic = (topic) => {
     if (selectedTopics.includes(topic)) {
-      setSelectedTopics(selectedTopics.filter(t => t !== topic));
+      setDraftTopics(selectedTopics.filter(t => t !== topic));
     } else {
-      setSelectedTopics([...selectedTopics, topic]);
+      setDraftTopics([...selectedTopics, topic]);
     }
   };
 
   const handleSave = async () => {
     await updatePreferences(selectedTopics);
-    onClose();
+    handleClose();
   };
 
   return (
@@ -36,13 +36,13 @@ export default function PreferenceModal({ isOpen, onClose }) {
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       />
       
       {/* Modal */}
       <div className="relative w-full max-w-lg border-2 p-8 md:p-12" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--accent)', boxShadow: `12px 12px 0px var(--accent)`, borderRadius: 'var(--border-radius)', color: 'var(--foreground)' }}>
         <button 
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 p-2 transition-all hover:opacity-60"
           style={{ color: 'var(--foreground)' }}
         >
@@ -90,9 +90,9 @@ export default function PreferenceModal({ isOpen, onClose }) {
               Save Preferences
             </button>
             
-            {useAuth().user && (
+            {user && (
               <button 
-                onClick={() => { useAuth().logout(); onClose(); }}
+                onClick={() => { logout(); handleClose(); }}
                 className="w-full py-3 border-2 font-black uppercase tracking-widest text-[9px] opacity-60 hover:opacity-100 transition-all"
                 style={{ borderColor: 'var(--accent)', color: 'var(--foreground)', borderRadius: 'var(--pill-radius)' }}
               >
@@ -101,7 +101,7 @@ export default function PreferenceModal({ isOpen, onClose }) {
             )}
 
             <button 
-              onClick={onClose}
+              onClick={handleClose}
               className="w-full py-2 text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
             >
               Dismiss for now

@@ -3,17 +3,32 @@ import Navbar from './Navbar';
 import Head from 'next/head';
 import { useTheme } from '@/context/ThemeContext';
 import BottomNav from './BottomNav';
+import InstallPrompt from './InstallPrompt';
 
 export default function Layout({ children, onSearch, onTabChange }) {
   const { theme, cycleTheme } = useTheme();
+  const themeColor =
+    theme === 'dark' ? '#09090b' : theme === 'magazine' ? '#1a1a1a' : '#ffffff';
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       <Head>
         <title>HONEST. Briefs</title>
-        <meta name="description" content="Premium Newspaper News Aggregator" />
+        <meta
+          name="description"
+          content="HONEST. Briefs delivers a newspaper-style news feed you can install like an app."
+        />
+        <meta name="application-name" content="HONEST. Briefs" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="HONEST. Briefs" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content={themeColor} />
+        <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
       </Head>
 
       {/* Background Layer */}
@@ -26,6 +41,7 @@ export default function Layout({ children, onSearch, onTabChange }) {
           {children}
         </main>
         <BottomNav activeTab="home" onTabChange={onTabChange} onThemeToggle={cycleTheme} />
+        <InstallPrompt />
       </div>
 
       {/* Footer Branding */}
