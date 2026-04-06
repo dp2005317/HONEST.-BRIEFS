@@ -117,7 +117,7 @@ export default async function handler(req, res) {
   const { category = 'General', page = 1, q = '' } = req.query;
   const apiKey = process.env.GNEWS_API_KEY;
 
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
 
   try {
     const allArticles = [];

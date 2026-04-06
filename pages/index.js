@@ -69,9 +69,12 @@ export default function Home() {
     return `/api/news?category=${activeCategory}&page=${pageIndex + 1}`;
   };
 
-  const { data, error, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher);
+  const { data, error, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher, {
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+  });
 
-  const isLoading = !data && !error;
+  const isLoading = (!data && !error) || (isValidating && !data);
   const articles = data ? data.map(page => page.articles).flat() : [];
   const hasMore = data ? data[data.length - 1]?.hasMore : false;
   const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");

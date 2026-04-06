@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ExternalLink, Share2, Heart } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ReelsViewer({ articles }) {
   const containerRef = useRef(null);
@@ -102,13 +103,16 @@ export default function ReelsViewer({ articles }) {
                   />
                 ) : (
                   // Placeholder before activation to save network
-                  <div className="w-full h-full bg-black/80 flex items-center justify-center">
-                    <img 
+                  <div className="w-full h-full bg-black/80 flex items-center justify-center relative">
+                    <Image 
                       src={article.image || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} 
                       alt="Thumbnail" 
-                      className="w-full h-full object-cover opacity-50"
+                      fill
+                      priority={index <= 2}
+                      sizes="(max-width: 768px) 100vw, 420px"
+                      className="object-cover opacity-50"
                     />
-                    <div className="absolute w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                    <div className="absolute w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center z-20">
                        <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-2" />
                     </div>
                   </div>
