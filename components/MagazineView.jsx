@@ -170,11 +170,11 @@ function GridCard({ article }) {
 }
 
 
-export default function MagazineView({ articles, category, weather, userCity }) {
+export default function MagazineView({ articles, category, weather, userCity, searchQuery }) {
   if (!articles || articles.length === 0) {
     return (
       <div className="p-20 text-center font-magazine text-3xl uppercase tracking-widest opacity-20">
-        No stories for this edition.
+        {searchQuery ? `No results found for "${searchQuery}".` : "No stories for this edition."}
       </div>
     );
   }

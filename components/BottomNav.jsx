@@ -8,10 +8,10 @@ export default function BottomNav({ activeTab = 'home', onTabChange, onThemeTogg
       <div className="flex justify-around items-center h-16">
         <button 
           onClick={() => onTabChange && onTabChange('home')}
-          className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? '' : 'opacity-50'}`}
+          className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-all py-2 ${activeTab === 'home' ? '' : 'opacity-50'}`}
           style={{ color: activeTab === 'home' ? 'var(--foreground)' : 'var(--ink-secondary)' }}
         >
-          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+          <div className="relative p-1.5 px-4 rounded-full transition-all flex items-center justify-center">
              {activeTab === 'home' && (
                <div className="absolute inset-0 rounded-full opacity-10" style={{ backgroundColor: 'var(--foreground)' }} />
              )}
@@ -22,10 +22,10 @@ export default function BottomNav({ activeTab = 'home', onTabChange, onThemeTogg
 
         <button 
           onClick={() => onThemeToggle && onThemeToggle()}
-          className="relative flex flex-col items-center gap-1 transition-all opacity-50"
+          className="relative flex flex-1 flex-col items-center justify-center gap-1 transition-all opacity-50 py-2 cursor-pointer"
           style={{ color: 'var(--ink-secondary)' }}
         >
-          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+          <div className="relative p-1.5 px-4 rounded-full transition-all flex items-center justify-center">
              <Palette className="w-6 h-6 relative z-10" />
           </div>
           <span className="text-[10px] font-bold tracking-tight">Theme</span>
@@ -33,10 +33,10 @@ export default function BottomNav({ activeTab = 'home', onTabChange, onThemeTogg
 
         <button 
           onClick={() => onTabChange && onTabChange('Video News')}
-          className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === 'Video News' ? '' : 'opacity-50'}`}
+          className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-all py-2 ${activeTab === 'Video News' ? '' : 'opacity-50'}`}
           style={{ color: activeTab === 'Video News' ? 'var(--foreground)' : 'var(--ink-secondary)' }}
         >
-          <div className="relative p-1.5 px-6 rounded-full transition-all flex items-center justify-center">
+          <div className="relative p-1.5 px-4 rounded-full transition-all flex items-center justify-center">
              {activeTab === 'Video News' && (
                <div className="absolute inset-0 rounded-full opacity-20" style={{ backgroundColor: 'rgba(128,128,128,0.5)' }} />
              )}

@@ -149,6 +149,7 @@ export default function Home() {
             category={activeCategory}
             weather={weather}
             userCity={userCity}
+            searchQuery={searchQuery}
           />
         )}
       </Layout>
@@ -175,12 +176,14 @@ export default function Home() {
            </div>
          </div>
 
-         <div className="flex items-center gap-6 border-t pt-6" style={{ borderColor: 'var(--border-ink)' }}>
+         <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-6 border-t pt-6" style={{ borderColor: 'var(--border-ink)' }}>
            <p className="font-black uppercase tracking-[0.3em] text-[11px]" style={{ color: 'var(--foreground)' }}>Publishing House</p>
-           <div className="w-2 h-2 rotate-45" style={{ backgroundColor: 'var(--accent)' }} />
+           <div className="w-2 h-2 rotate-45 flex-shrink-0" style={{ backgroundColor: 'var(--accent)' }} />
            <p className="font-black uppercase tracking-[0.3em] text-[11px]" style={{ color: 'var(--foreground)' }}>{activeCategory}</p>
-           <div className="flex-1 border-t border-dashed" style={{ borderColor: 'var(--border-ink)' }} />
-           <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+           <div className="hidden md:block flex-1 border-t border-dashed" style={{ borderColor: 'var(--border-ink)' }} />
+           <div className="w-full md:w-auto mt-2 md:mt-0 text-right md:text-left">
+             <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 whitespace-nowrap">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+           </div>
          </div>
           
           {searchQuery && (
@@ -226,7 +229,7 @@ export default function Home() {
             </div>
           ) : articles.length === 0 ? (
             <div className="p-20 text-center italic font-serif text-3xl border-2 border-dashed opacity-20" style={{ borderColor: 'var(--border-ink)' }}>
-              No bulletins filed for this evening&apos;s edition.
+              {searchQuery ? `No results found for "${searchQuery}".` : "No bulletins filed for this evening's edition."}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full h-full auto-rows-[auto]">
